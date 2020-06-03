@@ -20,7 +20,7 @@
    <groupId>org.apache.activemq</groupId>
    <artifactId>artemis-pom</artifactId>
    <packaging>pom</packaging>
-   <version>2.13.0.SEE1-SNAPSHOT</version>
+   <version>2.13.0.SEE1</version>
 
    <parent>
       <groupId>org.apache</groupId>
@@ -206,7 +206,8 @@
         <connection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</connection>
         <developerConnection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</developerConnection>
         <url>https://github.com/seeburger-ag/activemq-artemis</url>
-    </scm>
+      <tag>artemis-pom-2.13.0.SEE1</tag>
+  </scm>
 
    <distributionManagement>
       <site>

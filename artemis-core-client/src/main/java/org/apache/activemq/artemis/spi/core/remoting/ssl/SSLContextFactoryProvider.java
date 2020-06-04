@@ -30,8 +30,12 @@ public class SSLContextFactoryProvider {
       ServiceLoader<SSLContextFactory> loader = ServiceLoader.load(SSLContextFactory.class, Thread.currentThread().getContextClassLoader());
       final List<SSLContextFactory> factories = new ArrayList<>();
       loader.forEach(factories::add);
-      Collections.sort(factories);
-      factory = factories.get(factories.size() - 1);
+      if (factories.isEmpty()) {
+          factory = null;
+      } else {
+          Collections.sort(factories);
+          factory = factories.get(factories.size() - 1);
+      }
    }
    /**
     * @return the SSLContextFactory with the higher priority.

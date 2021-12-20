@@ -59,6 +59,10 @@ public class NIOSequentialFile extends AbstractSequentialFile {
     */
    private static final int CHUNK_SIZE = 2 * 1024 * 1024;
 
+   private static final int RETRIES_MAX = Integer.getInteger("org.apache.activemq.artemis.core.io.nio.NIOSequentialFile.RETRIES_MAX", 5).intValue();
+
+   private static final long RETRIES_TIMEOUT = Long.getLong("org.apache.activemq.artemis.core.io.nio.NIOSequentialFile.RETRIES_TIMEOUT", 15000).intValue();
+
    private FileChannel channel;
 
    private RandomAccessFile rfile;
@@ -140,7 +144,37 @@ public class NIOSequentialFile extends AbstractSequentialFile {
    @Override
    public void open(final int maxIO, final boolean useExecutor) throws IOException {
       try {
-         rfile = new RandomAccessFile(getFile(), "rw");
+          int tries = 0;
+          long timePassed;
+          long start = System.currentTimeMillis();
+          IOException fatalEx;
+          do {
+             tries++;
+             try {
+                rfile = new RandomAccessFile(getFile(), "rw");
+                fatalEx = null;
+                break; // all good
+             }
+             catch (IOException ex) {
+                fatalEx = ex;
+                ActiveMQJournalLogger.LOGGER.error("Error opening file=" + getFileName() +
+                      "! This is fatal and server shut-down is imminent! Will retry up to " + RETRIES_MAX +
+                      " times before fatal error, current retry=" + (tries-1) + "! Ex=" + ex);
+                try {
+                   long sleepTime = Math.min(5000, (2 * (long)Math.pow(10d, tries))); // 20, 200, 2000, 5000ms
+                   Thread.sleep(sleepTime);
+                }
+                catch (InterruptedException intEx) {
+                   Thread.currentThread().interrupt();
+                }
+                timePassed = System.currentTimeMillis() - start;
+             }
+          }
+          while (tries <= RETRIES_MAX && timePassed < RETRIES_TIMEOUT);
+          if (fatalEx != null) {
+             ActiveMQJournalLogger.LOGGER.fatal("Error opening file=" + getFileName() + "! This is fatal and server shut-down is imminent!", fatalEx);
+             throw fatalEx;
+          }
 
          channel = rfile.getChannel();
 

@@ -250,10 +250,9 @@
    </properties>
 
    <scm>
-      <connection>scm:git:https://gitbox.apache.org/repos/asf/activemq-artemis.git</connection>
-      <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/activemq-artemis.git</developerConnection>
-      <url>https://github.com/apache/activemq-artemis</url>
-      <tag>2.19.0</tag>
+      <connection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</connection>
+      <developerConnection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</developerConnection>
+      <url>https://github.com/seeburger-ag/activemq-artemis</url>
    </scm>
 
    <distributionManagement>
@@ -264,6 +263,14 @@
          <url>${staging.siteURL}/maven/${project.version}</url>
          <!--<url>${site-repo-url}</url>-->
       </site>
+      <repository>
+          <id>release</id>
+          <url>http://repo.seeburger.de/archiva/repository/release/</url>
+      </repository>
+      <snapshotRepository>
+          <id>snapshot}</id>
+          <url>http://repo.seeburger.de/archiva/repository/snapshot/</url>
+      </snapshotRepository>
    </distributionManagement>
 
    <issueManagement>

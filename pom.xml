@@ -248,11 +248,28 @@
    </properties>
 
    <scm>
-      <connection>scm:git:https://gitbox.apache.org/repos/asf/activemq-artemis.git</connection>
-      <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/activemq-artemis.git</developerConnection>
-      <url>https://github.com/apache/activemq-artemis</url>
-      <tag>HEAD</tag>
+      <connection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</connection>
+      <developerConnection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</developerConnection>
+      <url>https://github.com/seeburger-ag/activemq-artemis</url>
    </scm>
+
+   <distributionManagement>
+      <site>
+         <!-- this needs to match a server in your settings.xml with upload settings -->
+         <id>activemq-website</id>
+         <!-- set the staging.siteURL in your ~/.m2/settings.xml in a release or other profile -->
+         <url>${staging.siteURL}/maven/${project.version}</url>
+         <!--<url>${site-repo-url}</url>-->
+      </site>
+      <repository>
+          <id>release</id>
+          <url>http://repo.seeburger.de/archiva/repository/release/</url>
+      </repository>
+      <snapshotRepository>
+          <id>snapshot}</id>
+          <url>http://repo.seeburger.de/archiva/repository/snapshot/</url>
+      </snapshotRepository>
+   </distributionManagement>
 
    <issueManagement>
       <system>JIRA</system>
@@ -1249,6 +1266,13 @@
                         </configuration>
                      </execution>
                   </executions>
+               </plugin>
+               <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-gpg-plugin</artifactId>
+                 <configuration>
+                    <skip>true</skip>
+                </configuration>
                </plugin>
             </plugins>
          </build>

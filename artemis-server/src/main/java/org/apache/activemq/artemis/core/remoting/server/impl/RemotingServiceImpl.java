@@ -382,9 +382,13 @@ public class RemotingServiceImpl implements RemotingService, ServerConnectionLif
          return;
       }
       SSLContextFactoryProvider.getSSLContextFactory().clearSSLContexts();
-      OpenSSLContextFactory openSSLContextFactory = OpenSSLContextFactoryProvider.getOpenSSLContextFactory();
-      if (openSSLContextFactory != null) {
-         openSSLContextFactory.clearSslContexts();
+      try {
+          OpenSSLContextFactory openSSLContextFactory = OpenSSLContextFactoryProvider.getOpenSSLContextFactory();
+          if (openSSLContextFactory != null) {
+             openSSLContextFactory.clearSslContexts();
+          }
+      } catch (IllegalStateException | ExceptionInInitializerError ex) {
+          ActiveMQServerLogger.LOGGER.info("ARTEMIS-3433: OpenSSLContextFactory not available.");
       }
 
       failureCheckAndFlushThread.close(criticalError);

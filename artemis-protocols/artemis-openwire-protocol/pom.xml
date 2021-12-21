@@ -128,6 +128,7 @@
                      !javax.jmdns,
                      javax.jms;version="[2,3)",
                      com.thoughtworks.xstream.*;resolution:="optional",
+                     com.google.common.*;version="[30.1,50)",
                      *
                   </Import-Package>
                </instructions>

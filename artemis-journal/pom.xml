@@ -90,5 +90,37 @@
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
+      <!-- needed for DataStore journal implementation -->
+      <dependency>
+        <groupId>com.seeburger.common</groupId>
+        <artifactId>storage-client</artifactId>
+        <version>1.106.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.seeburger.common</groupId>
+        <artifactId>storage-common</artifactId>
+        <version>1.106.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <!-- needed for VFS journal implementation -->
+      <dependency>
+        <artifactId>vfs-client-api</artifactId>
+        <groupId>com.seeburger.vfs</groupId>
+        <version>1.79.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <artifactId>recovery</artifactId>
+        <groupId>com.seeburger.bis.base</groupId>
+        <version>1.25.9</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <artifactId>auth</artifactId>
+        <groupId>com.seeburger.security</groupId>
+        <version>1.21.12</version>
+        <scope>provided</scope>
+      </dependency>
    </dependencies>
 </project>

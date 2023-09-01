@@ -656,6 +656,8 @@
                   <xsd:enumeration value="ASYNCIO"/>
                   <xsd:enumeration value="NIO"/>
                   <xsd:enumeration value="MAPPED"/>
+                  <xsd:enumeration value="DATA_STORE"/>
+                  <xsd:enumeration value="VFS"/>
                </xsd:restriction>
             </xsd:simpleType>
          </xsd:element>

@@ -43,8 +43,10 @@ import org.apache.activemq.artemis.core.io.IOCriticalErrorListener;
 import org.apache.activemq.artemis.core.io.SequentialFile;
 import org.apache.activemq.artemis.core.io.SequentialFileFactory;
 import org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory;
+import org.apache.activemq.artemis.core.io.datastore.DataStoreSequentialFileFactory;
 import org.apache.activemq.artemis.core.io.mapped.MappedSequentialFileFactory;
 import org.apache.activemq.artemis.core.io.nio.NIOSequentialFileFactory;
+import org.apache.activemq.artemis.core.io.vfs.VFSSequentialFileFactory;
 import org.apache.activemq.artemis.core.journal.EncoderPersister;
 import org.apache.activemq.artemis.core.journal.EncodingSupport;
 import org.apache.activemq.artemis.core.journal.Journal;
@@ -164,6 +166,12 @@ public class JournalStorageManager extends AbstractJournalStorageManager {
             }
             journalFF = new MappedSequentialFileFactory(config.getJournalLocation(), config.getJournalFileSize(), true, config.getJournalBufferSize_NIO(), config.getJournalBufferTimeout_NIO(), criticalErrorListener);
             break;
+         case DATA_STORE:
+             journalFF = new DataStoreSequentialFileFactory(config.isLogJournalWriteRate(), criticalErrorListener, getCriticalAnalyzer());
+             break;
+         case VFS:
+             journalFF = new VFSSequentialFileFactory(config.getJournalLocation(), false, 0, 0, 1, false, criticalErrorListener, getCriticalAnalyzer());
+             break;
          default:
             throw ActiveMQMessageBundle.BUNDLE.invalidJournalType2(config.getJournalType());
       }

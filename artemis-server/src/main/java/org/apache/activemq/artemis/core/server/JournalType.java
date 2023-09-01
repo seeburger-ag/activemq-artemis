@@ -18,7 +18,7 @@ package org.apache.activemq.artemis.core.server;
 
 
 public enum JournalType {
-   NIO, ASYNCIO, MAPPED;
+   NIO, ASYNCIO, MAPPED, DATA_STORE, VFS;
 
    public static final String validValues;
 
@@ -41,6 +41,8 @@ public enum JournalType {
          case "NIO": return NIO;
          case "ASYNCIO" : return ASYNCIO;
          case "MAPPED" : return MAPPED;
+         case "DATA_STORE": return DATA_STORE;
+         case "VFS": return VFS;
          default: throw new IllegalStateException("Invalid JournalType:" + type + " valid Types: " + validValues);
       }
    }

@@ -59,6 +59,8 @@ public final class ClientConsumerImpl implements ClientConsumerInternal {
 
    private static final int NUM_PRIORITIES = 10;
 
+   private static final boolean SLOW_CONSUMER_HANDLING_WARNING = Boolean.parseBoolean(System.getProperty("artemis.slow.consumer.handling.warning", "true"));
+
    public static final SimpleString FORCED_DELIVERY_MESSAGE = SimpleString.of("_hornetq.forced.delivery.seq");
 
    private final ClientSessionInternal session;
@@ -849,11 +851,22 @@ public final class ClientConsumerImpl implements ClientConsumerInternal {
    private void startSlowConsumer() {
       logger.trace("{}::Sending 1 credit to start delivering of one message to slow consumer", this);
       sendCredits(1);
+      final long currentTime = System.currentTimeMillis();
       try {
          // We use an executor here to guarantee the messages will arrive in order.
          // However when starting a slow consumer, we have to guarantee the credit was sent before we can perform any
          // operations like forceDelivery
-         pendingFlowControl.await(10, TimeUnit.SECONDS);
+         boolean timedOut = !pendingFlowControl.await(10, TimeUnit.SECONDS);
+         if (SLOW_CONSUMER_HANDLING_WARNING) {
+            if (timedOut) {
+               logger.error("Slow consumer handling: Timed out on #startSlowConsumer!", new Throwable());
+            } else {
+               long end = System.currentTimeMillis();
+               if (end - currentTime > 1000) {
+                  logger.warn("Slow consumer handling: #startSlowConsumer took " + (end - currentTime) + "ms of its 10 seconds limit.");
+               }
+            }
+         }
       } catch (InterruptedException e) {
          // will just ignore and forward the ignored
          Thread.currentThread().interrupt();
@@ -867,6 +880,7 @@ public final class ClientConsumerImpl implements ClientConsumerInternal {
 
          // If resetting a slow consumer, we need to wait the execution
          final CountDownLatch latch = new CountDownLatch(1);
+         final long currentTime = System.currentTimeMillis();
          flowControlExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -875,7 +889,17 @@ public final class ClientConsumerImpl implements ClientConsumerInternal {
          });
 
          try {
-            latch.await(10, TimeUnit.SECONDS);
+            boolean timedOut = !latch.await(10, TimeUnit.SECONDS);
+            if (SLOW_CONSUMER_HANDLING_WARNING) {
+               if (timedOut) {
+                  logger.error("Slow consumer handling: Timed out on #resetIfSlowConsumer!", new Throwable());
+               } else {
+                  long end = System.currentTimeMillis();
+                  if (end - currentTime > 1000) {
+                     logger.warn("Slow consumer handling: #resetIfSlowConsumer took " + (end - currentTime) + "ms of its 10 seconds limit.");
+                  }
+               }
+            }
          } catch (InterruptedException e) {
             throw new ActiveMQInterruptedException(e);
          }

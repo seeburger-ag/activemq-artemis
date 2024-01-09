@@ -158,17 +158,15 @@ public class NIOSequentialFile extends AbstractSequentialFile {
                rfile = new RandomAccessFile(getFile(), "rw");
                fatalEx = null;
                break; // all good
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                fatalEx = ex;
                logger.error("Error opening file=" + getFileName() +
                      "! This is fatal and server shut-down is imminent! Will retry up to " + RETRIES_MAX +
-                     " times before fatal error, current retry=" + (tries-1) + "! Ex=" + ex);
+                     " times before fatal error, current retry=" + (tries - 1) + "! Ex=" + ex);
                try {
                   long sleepTime = Math.min(5000, (2 * (long)Math.pow(10d, tries))); // 20, 200, 2000, 5000ms
                   Thread.sleep(sleepTime);
-               }
-               catch (InterruptedException intEx) {
+               } catch (InterruptedException intEx) {
                   Thread.currentThread().interrupt();
                }
                timePassed = System.currentTimeMillis() - start;
@@ -179,7 +177,6 @@ public class NIOSequentialFile extends AbstractSequentialFile {
             logger.error("Error opening file=" + getFileName() + "! This is fatal and server shut-down is imminent!", fatalEx);
             throw fatalEx;
          }
-
          channel = rfile.getChannel();
 
          fileSize = channel.size();

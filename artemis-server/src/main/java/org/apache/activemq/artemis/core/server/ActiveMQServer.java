@@ -421,6 +421,8 @@ public interface ActiveMQServer extends ServiceComponent {
 
    int getConnectionCount();
 
+   Map<String, String> getConnectionsInfo();
+
    long getTotalConnectionCount();
 
    int getSessionCount();

@@ -2005,6 +2005,11 @@ public class ActiveMQServerImpl implements ActiveMQServer {
    }
 
    @Override
+   public Map<String, String> getConnectionsInfo() {
+      return remotingService.getConnectionsInfo();
+   }
+
+   @Override
    public long getTotalConnectionCount() {
       return remotingService.getTotalConnectionCount();
    }

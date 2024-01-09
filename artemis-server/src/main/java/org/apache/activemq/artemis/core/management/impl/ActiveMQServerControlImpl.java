@@ -2473,6 +2473,26 @@ public class ActiveMQServerControlImpl extends AbstractControl implements Active
    }
 
    @Override
+   public Map<String, String> listConnectionEntryInfo() {
+      return remotingService.getConnectionsInfo();
+   }
+
+   @Override
+   public void enableConnectionCreationStacktraceLogging() {
+      remotingService.setStackTraceLogEnabled(true);
+   }
+
+   @Override
+   public void disableSessionCreationStacktraceLogging() {
+      remotingService.setStackTraceLogEnabled(false);
+   }
+
+   @Override
+   public boolean isConnectionCreationStackTraceEnabled() {
+      return remotingService.isStackTraceLogEnabled();
+   }
+
+   @Override
    public String[] listSessions(final String connectionID) {
       if (AuditLogger.isBaseLoggingEnabled()) {
          AuditLogger.listSessions(this.server, connectionID);

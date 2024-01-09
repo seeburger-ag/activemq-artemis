@@ -1264,6 +1264,10 @@ public interface ActiveMQServerControl {
    @Operation(desc = "List all the connection IDs", impact = MBeanOperationInfo.INFO)
    String[] listConnectionIDs() throws Exception;
 
+   @Operation(desc = "List connection entry info", impact = MBeanOperationInfo.INFO)
+   Map<String,String> listConnectionEntryInfo() throws Exception;
+
+
    @Operation(desc = "List all producers", impact = MBeanOperationInfo.INFO)
    String listProducersInfoAsJSON() throws Exception;
 

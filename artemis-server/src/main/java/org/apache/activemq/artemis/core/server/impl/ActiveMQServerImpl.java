@@ -1968,6 +1968,14 @@ public class ActiveMQServerImpl implements ActiveMQServer {
       return remotingService.getConnectionCount();
    }
 
+
+   @Override
+   public Map<String, String> getConnectionsInfo()
+   {
+      return remotingService.getConnectionsInfo();
+   }
+
+
    @Override
    public long getTotalConnectionCount() {
       return remotingService.getTotalConnectionCount();

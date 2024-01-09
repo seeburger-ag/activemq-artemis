@@ -16,6 +16,8 @@
  */
 package org.apache.activemq.artemis.core.remoting.server.impl;
 
+
+import java.lang.invoke.MethodHandles;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collections;
@@ -76,18 +78,18 @@ import org.apache.activemq.artemis.spi.core.remoting.ssl.OpenSSLContextFactory;
 import org.apache.activemq.artemis.spi.core.remoting.ssl.OpenSSLContextFactoryProvider;
 import org.apache.activemq.artemis.spi.core.remoting.ssl.SSLContextFactoryProvider;
 import org.apache.activemq.artemis.utils.ActiveMQThreadFactory;
+import org.apache.activemq.artemis.utils.CallerStack;
 import org.apache.activemq.artemis.utils.ConfigurationHelper;
 import org.apache.activemq.artemis.utils.ReusableLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.lang.invoke.MethodHandles;
 
 public class RemotingServiceImpl implements RemotingService, ServerConnectionLifeCycleListener {
 
    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
    private static final int ACCEPTOR_STOP_TIMEOUT = 3000;
-
+   public static boolean IS_STACK_TRACE_LOG_ENABLED = Boolean.getBoolean("enable.connection.creation.stacktrace.logging");
 
    private volatile boolean started = false;
 
@@ -491,8 +493,21 @@ public class RemotingServiceImpl implements RemotingService, ServerConnectionLif
          if (AuditLogger.isResourceLoggingEnabled()) {
             AuditLogger.destroyedConnection(entry.connection.getProtocolName(), entry.connection.getID(), entry.connection.getSubject(), entry.connection.getRemoteAddress());
          }
-         if (logger.isDebugEnabled()) {
-            logger.debug("RemotingServiceImpl::removing succeeded connection ID {}, we now have {} connections", remotingConnectionID, connections.size());
+         if (logger.isDebugEnabled())
+         {
+            if (IS_STACK_TRACE_LOG_ENABLED)
+            {
+               logger.debug("RemotingServiceImpl::removing succeeded connection {} opened by {}, we now have {} connections",
+                            remotingConnectionID,
+                            entry.getOpenerStackTrace(),
+                            connections.size());
+            }
+            else
+            {
+               logger.debug("RemotingServiceImpl::removing succeeded connection {} , we now have {} connections",
+                            remotingConnectionID, connections.size());
+            }
+
          }
          connectionCountLatch.countDown();
          return entry.connection;
@@ -535,6 +550,19 @@ public class RemotingServiceImpl implements RemotingService, ServerConnectionLif
       return totalConnectionCount.get();
    }
 
+
+   @Override
+   public Map<String, String> getConnectionsInfo()
+   {
+      Map<String, String> info = new HashMap<>();
+      for (ConnectionEntry entry : connections.values())
+      {
+         info.put(String.valueOf(entry.getID()), entry.getOpenerStackTrace());
+      }
+      return info;
+   }
+
+
    @Override
    public synchronized ReusableLatch getConnectionCountLatch() {
       return connectionCountLatch;
@@ -572,7 +600,15 @@ public class RemotingServiceImpl implements RemotingService, ServerConnectionLif
 
       }
 
-      logger.trace("Connection created {}", connection);
+      if (IS_STACK_TRACE_LOG_ENABLED)
+      {
+         entry.setOpenerStackTrace(CallerStack.getCallerInfo("org.apache"));
+         logger.trace("Connection {} created by {}", connection, entry.getOpenerStackTrace());
+      }
+      else
+      {
+         logger.trace("Connection created {}", connection);
+      }
 
       addConnectionEntry(connection, entry);
       connectionCountLatch.countUp();
@@ -580,13 +616,28 @@ public class RemotingServiceImpl implements RemotingService, ServerConnectionLif
    }
 
    @Override
-   public void addConnectionEntry(Connection connection, ConnectionEntry entry) {
+   public void addConnectionEntry(Connection connection, ConnectionEntry entry)
+   {
       connections.put(connection.getID(), entry);
-      if (AuditLogger.isResourceLoggingEnabled()) {
-         AuditLogger.createdConnection(connection.getProtocolConnection() == null ? null : connection.getProtocolConnection().getProtocolName(), connection.getID(), connection.getRemoteAddress());
+      if (AuditLogger.isResourceLoggingEnabled())
+      {
+         AuditLogger.createdConnection(
+                         connection.getProtocolConnection() == null ? null : connection.getProtocolConnection().getProtocolName(),
+                         connection.getID(), connection.getRemoteAddress());
       }
-      if (logger.isDebugEnabled()) {
-         logger.debug("Adding connection {}, we now have {}", connection.getID(), connections.size());
+      if (logger.isDebugEnabled())
+      {
+         if (IS_STACK_TRACE_LOG_ENABLED)
+         {
+            logger.debug("Adding connection {} opened by {}, we now have {}",
+                         connection.getID(),
+                         entry.getOpenerStackTrace(),
+                         connections.size());
+         }
+         else
+         {
+            logger.debug("Adding connection {}, we now have {}", connection.getID(), connections.size());
+         }
       }
    }
 

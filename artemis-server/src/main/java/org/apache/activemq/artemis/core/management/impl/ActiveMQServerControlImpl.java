@@ -2471,6 +2471,15 @@ public class ActiveMQServerControlImpl extends AbstractControl implements Active
       }
    }
 
+
+   @Override
+   public Map<String, String> listConnectionEntryInfo()
+                   throws Exception
+   {
+      return remotingService.getConnectionsInfo();
+   }
+
+
    @Override
    public String[] listSessions(final String connectionID) {
       if (AuditLogger.isBaseLoggingEnabled()) {

@@ -61,6 +61,8 @@ public interface RemotingService {
     */
    long getTotalConnectionCount();
 
+   Map<String,String> getConnectionsInfo();
+
    ReusableLatch getConnectionCountLatch();
 
    void addIncomingInterceptor(BaseInterceptor interceptor);

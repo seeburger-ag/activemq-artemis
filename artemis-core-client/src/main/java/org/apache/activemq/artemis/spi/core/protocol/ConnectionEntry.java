@@ -28,7 +28,10 @@ public class ConnectionEntry {
 
    public final Executor connectionExecutor;
 
-   public Object getID() {
+   private String openerStackTrace;
+
+   public Object getID()
+   {
       return connection.getID();
    }
 
@@ -43,5 +46,17 @@ public class ConnectionEntry {
       this.ttl = ttl;
 
       this.connectionExecutor = connectionExecutor;
+   }
+
+
+   public String getOpenerStackTrace()
+   {
+      return openerStackTrace;
+   }
+
+
+   public void setOpenerStackTrace(String openerStackTrace)
+   {
+      this.openerStackTrace = openerStackTrace;
    }
 }

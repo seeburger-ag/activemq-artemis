@@ -1401,6 +1401,18 @@ public interface ActiveMQServerControl {
    @Operation(desc = "List all the connection IDs", impact = MBeanOperationInfo.INFO)
    String[] listConnectionIDs() throws Exception;
 
+    @Operation(desc = "List connection entry info", impact = MBeanOperationInfo.INFO)
+    Map<String, String> listConnectionEntryInfo() throws Exception;
+
+    @Operation(desc = "Enable caller stacktrace logging when connection is created", impact = MBeanOperationInfo.INFO)
+    void enableConnectionCreationStacktraceLogging() throws Exception;
+
+    @Operation(desc = "Disable caller stacktrace logging when session is created", impact = MBeanOperationInfo.INFO)
+    void disableSessionCreationStacktraceLogging() throws Exception;
+
+    @Attribute(desc = "is caller stacktrace logging when connection is created enabled")
+    boolean isConnectionCreationStackTraceEnabled() throws Exception;
+
    /**
     * List details as JSON about the producers sending messages to this broker. The JSON consists of an array of objects
     * containing details about each producer, e.g.:

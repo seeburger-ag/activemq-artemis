@@ -16,6 +16,8 @@
  */
 package org.apache.activemq.artemis.tests.integration.management;
 
+
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.activemq.artemis.api.core.ActiveMQAddressDoesNotExistException;
@@ -768,6 +770,31 @@ public class ActiveMQServerControlUsingCoreTest extends ActiveMQServerControlTes
          public String[] listConnectionIDs() throws Exception {
             return (String[]) proxy.invokeOperation("listConnectionIDs");
          }
+
+
+         @Override
+         public Map<String, String> listConnectionEntryInfo() {
+            return Collections.emptyMap();
+         }
+
+
+         @Override
+         public void enableConnectionCreationStacktraceLogging() throws Exception {
+            proxy.invokeOperation("enableConnectionCreationStacktraceLogging");
+         }
+
+
+         @Override
+         public void disableSessionCreationStacktraceLogging()throws Exception {
+            proxy.invokeOperation("disableSessionCreationStacktraceLogging");
+         }
+
+
+         @Override
+         public boolean isConnectionCreationStackTraceEnabled() throws Exception {
+            return (boolean)proxy.invokeOperation("isConnectionCreationStackTraceEnabled");
+         }
+
 
          @Override
          public String[] listPreparedTransactions() throws Exception {

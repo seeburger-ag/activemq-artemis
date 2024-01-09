@@ -397,6 +397,7 @@ public interface ActiveMQServer extends ServiceComponent {
    OperationContext newOperationContext();
 
    int getConnectionCount();
+   Map<String,String> getConnectionsInfo();
 
    long getTotalConnectionCount();
 

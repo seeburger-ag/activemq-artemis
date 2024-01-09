@@ -148,38 +148,35 @@ public class NIOSequentialFile extends AbstractSequentialFile {
    @Override
    public void open(final int maxIO, final boolean useExecutor) throws IOException {
       try {
-          int tries = 0;
-          long timePassed;
-          long start = System.currentTimeMillis();
-          IOException fatalEx;
-          do {
-             tries++;
-             try {
-                rfile = new RandomAccessFile(getFile(), "rw");
-                fatalEx = null;
-                break; // all good
-             }
-             catch (IOException ex) {
-                fatalEx = ex;
-                logger.error("Error opening file=" + getFileName() +
-                      "! This is fatal and server shut-down is imminent! Will retry up to " + RETRIES_MAX +
-                      " times before fatal error, current retry=" + (tries-1) + "! Ex=" + ex);
-                try {
-                   long sleepTime = Math.min(5000, (2 * (long)Math.pow(10d, tries))); // 20, 200, 2000, 5000ms
-                   Thread.sleep(sleepTime);
-                }
-                catch (InterruptedException intEx) {
-                   Thread.currentThread().interrupt();
-                }
-                timePassed = System.currentTimeMillis() - start;
-             }
-          }
-          while (tries <= RETRIES_MAX && timePassed < RETRIES_TIMEOUT);
-          if (fatalEx != null) {
-              logger.error("Error opening file=" + getFileName() + "! This is fatal and server shut-down is imminent!", fatalEx);
-             throw fatalEx;
-          }
-
+         int tries = 0;
+         long timePassed;
+         long start = System.currentTimeMillis();
+         IOException fatalEx;
+         do {
+            tries++;
+            try {
+               rfile = new RandomAccessFile(getFile(), "rw");
+               fatalEx = null;
+               break; // all good
+            } catch (IOException ex) {
+               fatalEx = ex;
+               logger.error("Error opening file=" + getFileName() +
+                     "! This is fatal and server shut-down is imminent! Will retry up to " + RETRIES_MAX +
+                     " times before fatal error, current retry=" + (tries - 1) + "! Ex=" + ex);
+               try {
+                  long sleepTime = Math.min(5000, (2 * (long)Math.pow(10d, tries))); // 20, 200, 2000, 5000ms
+                  Thread.sleep(sleepTime);
+               } catch (InterruptedException intEx) {
+                  Thread.currentThread().interrupt();
+               }
+               timePassed = System.currentTimeMillis() - start;
+            }
+         }
+         while (tries <= RETRIES_MAX && timePassed < RETRIES_TIMEOUT);
+         if (fatalEx != null) {
+            logger.error("Error opening file=" + getFileName() + "! This is fatal and server shut-down is imminent!", fatalEx);
+            throw fatalEx;
+         }
          channel = rfile.getChannel();
 
          fileSize = channel.size();

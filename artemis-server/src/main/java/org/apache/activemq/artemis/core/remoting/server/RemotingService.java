@@ -59,6 +59,8 @@ public interface RemotingService {
     */
    long getTotalConnectionCount();
 
+   Map<String,String> getConnectionsInfo();
+
    ReusableLatch getConnectionCountLatch();
 
    void addIncomingInterceptor(BaseInterceptor interceptor);
@@ -129,4 +131,9 @@ public interface RemotingService {
    void loadProtocolServices(List<ActiveMQComponent> protocolServices);
 
    void addConnectionEntry(Connection connection, ConnectionEntry entry);
+
+   boolean isStackTraceLogEnabled();
+
+   void setStackTraceLogEnabled(boolean stackTraceLogEnabled);
+
 }

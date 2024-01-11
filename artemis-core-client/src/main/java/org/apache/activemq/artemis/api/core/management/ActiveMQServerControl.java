@@ -1267,6 +1267,15 @@ public interface ActiveMQServerControl {
    @Operation(desc = "List connection entry info", impact = MBeanOperationInfo.INFO)
    Map<String,String> listConnectionEntryInfo() throws Exception;
 
+   @Operation(desc = "Enable caller stacktrace logging when connection is created", impact = MBeanOperationInfo.INFO)
+   void enableConnectionCreationStacktraceLogging() throws Exception;
+
+   @Operation(desc = "Disable caller stacktrace logging when session is created", impact = MBeanOperationInfo.INFO)
+   void disableSessionCreationStacktraceLogging() throws Exception;
+
+   @Attribute(desc = "is caller stacktrace logging when connection is created enabled")
+   boolean isConnectionCreationStackTraceEnabled() throws Exception;
+
 
    @Operation(desc = "List all producers", impact = MBeanOperationInfo.INFO)
    String listProducersInfoAsJSON() throws Exception;

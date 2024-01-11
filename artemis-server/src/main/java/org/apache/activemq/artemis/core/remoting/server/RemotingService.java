@@ -133,4 +133,9 @@ public interface RemotingService {
    void loadProtocolServices(List<ActiveMQComponent> protocolServices);
 
    void addConnectionEntry(Connection connection, ConnectionEntry entry);
+
+   boolean isStackTraceLogEnabled();
+
+   void setStackTraceLogEnabled(boolean stackTraceLogEnabled);
+
 }

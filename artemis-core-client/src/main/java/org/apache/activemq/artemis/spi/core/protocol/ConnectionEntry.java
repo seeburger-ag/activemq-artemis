@@ -30,8 +30,7 @@ public class ConnectionEntry {
 
    private String openerStackTrace;
 
-   public Object getID()
-   {
+   public Object getID() {
       return connection.getID();
    }
 
@@ -48,15 +47,11 @@ public class ConnectionEntry {
       this.connectionExecutor = connectionExecutor;
    }
 
-
-   public String getOpenerStackTrace()
-   {
+   public String getOpenerStackTrace() {
       return openerStackTrace;
    }
 
-
-   public void setOpenerStackTrace(String openerStackTrace)
-   {
+   public void setOpenerStackTrace(String openerStackTrace) {
       this.openerStackTrace = openerStackTrace;
    }
 }

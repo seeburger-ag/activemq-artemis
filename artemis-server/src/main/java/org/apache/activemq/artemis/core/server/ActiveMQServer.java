@@ -399,6 +399,8 @@ public interface ActiveMQServer extends ServiceComponent {
    int getConnectionCount();
    Map<String,String> getConnectionsInfo();
 
+   Map<String,String> getConnectionsInfo();
+
    long getTotalConnectionCount();
 
    long getTotalMessageCount();

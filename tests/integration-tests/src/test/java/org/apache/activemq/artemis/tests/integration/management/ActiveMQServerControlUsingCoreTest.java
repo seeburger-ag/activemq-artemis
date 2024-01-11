@@ -742,10 +742,26 @@ public class ActiveMQServerControlUsingCoreTest extends ActiveMQServerControlTes
 
 
          @Override
-         public Map<String, String> listConnectionEntryInfo()
-                         throws Exception
-         {
+         public Map<String, String> listConnectionEntryInfo() {
             return Collections.emptyMap();
+         }
+
+
+         @Override
+         public void enableConnectionCreationStacktraceLogging() throws Exception {
+            proxy.invokeOperation("enableConnectionCreationStacktraceLogging");
+         }
+
+
+         @Override
+         public void disableSessionCreationStacktraceLogging()throws Exception {
+            proxy.invokeOperation("disableSessionCreationStacktraceLogging");
+         }
+
+
+         @Override
+         public boolean isConnectionCreationStackTraceEnabled() throws Exception {
+            return (boolean)proxy.invokeOperation("isConnectionCreationStackTraceEnabled");
          }
 
 

@@ -85,6 +85,7 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
 
    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+   private static final boolean CREDIT_SYSTEM_DISABLE = Boolean.getBoolean("artemis.credit.system.disable");
 
    private final long id;
 
@@ -114,7 +115,7 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
 
    private final ReusableLatch pendingDelivery = new ReusableLatch(0);
 
-   private volatile AtomicInteger availableCredits = new AtomicInteger(0);
+   private volatile AtomicLong availableCredits = new AtomicLong(0);
 
    private boolean started;
 
@@ -263,7 +264,9 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
 
       this.supportLargeMessage = supportLargeMessage;
 
-      if (credits != null) {
+      if (CREDIT_SYSTEM_DISABLE) {
+         availableCredits = null;
+      } else if (credits != null) {
          if (credits == -1) {
             availableCredits = null;
          } else {
@@ -415,7 +418,7 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
    @Override
    public HandleStatus handle(final MessageReference ref) throws Exception {
       // available credits can be set back to null with a flow control option.
-      AtomicInteger checkInteger = availableCredits;
+      AtomicLong checkInteger = availableCredits;
       if (callback != null && !callback.hasCredits(this, ref) || checkInteger != null && checkInteger.get() <= 0) {
          if (logger.isDebugEnabled()) {
             logger.debug("{} is busy for the lack of credits. Current credits = {} Can't receive reference {}", this, availableCredits, ref);
@@ -832,9 +835,8 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
 
    @Override
    public void receiveCredits(final int credits) {
-      if (credits == -1) {
+      if (CREDIT_SYSTEM_DISABLE || credits == -1) {
          logger.debug("{}:: FlowControl::Received disable flow control message", this);
-
          // No flow control
          availableCredits = null;
 
@@ -845,7 +847,14 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
          logger.debug("{}:: FlowControl::Received reset flow control message", this);
          availableCredits.set(0);
       } else {
-         int previous = availableCredits.getAndAdd(credits);
+         long previous = availableCredits.getAndAdd(credits);
+         // sanity check for overflow
+         long current = availableCredits.get();
+         if (previous > 0 && current < 0 && current < credits) {
+            logger.warn("Possible integer overflow - previous=" + previous + ", current=" + current +
+                  ", credits added=" + credits + ". Resetting availableCredits to 1");
+            availableCredits.set(credits + 1); // not using 0 as might need a trigger then. credits+1 ensures messages will flow
+         }
 
          if (logger.isDebugEnabled()) {
             logger.debug("{}::FlowControl::Received {} credits, previous value = {} currentValue = {}", this, credits, previous, availableCredits.get());
@@ -1142,7 +1151,7 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
    /**
     * To be used on tests only
     */
-   public AtomicInteger getAvailableCredits() {
+   public AtomicLong getAvailableCredits() {
       return availableCredits;
    }
 
@@ -1343,7 +1352,7 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
                int packetSize = callback.sendLargeMessage(ref, ServerConsumerImpl.this, context.getSize(), ref.getDeliveryCount());
 
                if (availableCredits != null) {
-                  final int credits = availableCredits.addAndGet(-packetSize);
+                  final long credits = availableCredits.addAndGet(-packetSize);
 
                   if (credits <= 0) {
                      releaseHeapBodyBuffer();
@@ -1392,7 +1401,7 @@ public class ServerConsumerImpl implements ServerConsumer, ReadyListener {
                int chunkLen = body.length;
 
                if (availableCredits != null) {
-                  final int credits = availableCredits.addAndGet(-packetSize);
+                  final long credits = availableCredits.addAndGet(-packetSize);
 
                   if (credits <= 0) {
                      releaseHeapBodyBuffer();

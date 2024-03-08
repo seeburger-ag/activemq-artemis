@@ -807,7 +807,7 @@ public interface ActiveMQServerLogger {
    @LogMessage(id = 222165, value = "No Dead Letter Address configured for queue {} in AddressSettings", level = LogMessage.Level.WARN)
    void AddressSettingsNoDLA(SimpleString name);
 
-   @LogMessage(id = 222166, value = "No Expiry Address configured for queue {} in AddressSettings", level = LogMessage.Level.WARN)
+   @LogMessage(id = 222166, value = "No Expiry Address configured for queue {} in AddressSettings", level = LogMessage.Level.INFO)
    void AddressSettingsNoExpiryAddress(SimpleString name);
 
    @LogMessage(id = 222167, value = "Group Binding not available so deleting {} groups from {}, groups will be bound to another node", level = LogMessage.Level.WARN)

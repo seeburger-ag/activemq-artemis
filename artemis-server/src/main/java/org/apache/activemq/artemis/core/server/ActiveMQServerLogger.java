@@ -721,7 +721,7 @@ public interface ActiveMQServerLogger {
    @LogMessage(id = 222165, value = "No Dead Letter Address configured for queue {} in AddressSettings", level = LogMessage.Level.WARN)
    void AddressSettingsNoDLA(SimpleString name);
 
-   @LogMessage(id = 222166, value = "No Expiry Address configured for queue {} in AddressSettings", level = LogMessage.Level.WARN)
+   @LogMessage(id = 222166, value = "No Expiry Address configured for queue {} in AddressSettings", level = LogMessage.Level.DEBUG)
    void AddressSettingsNoExpiryAddress(SimpleString name);
 
    @SuppressWarnings("deprecation")

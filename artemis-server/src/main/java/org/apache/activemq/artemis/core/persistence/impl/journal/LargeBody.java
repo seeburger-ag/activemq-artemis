@@ -205,9 +205,7 @@ public class LargeBody {
          }
          return bodySize;
       } catch (Exception e) {
-         ActiveMQIOErrorException errorException = new ActiveMQIOErrorException();
-         errorException.initCause(e);
-         throw errorException;
+         throw new ActiveMQIOErrorException("Failed to determine body size of " + (file != null ? file.getFileName() : "temporary file"), e);
       }
    }
 

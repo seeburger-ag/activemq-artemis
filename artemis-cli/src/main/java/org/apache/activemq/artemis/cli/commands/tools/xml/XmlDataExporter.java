@@ -67,13 +67,10 @@ import org.apache.activemq.artemis.core.server.JournalType;
 import org.apache.activemq.artemis.utils.collections.LinkedListIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Command;
 
-@Command(name = "exp", description = "Export all message-data using an XML that could be interpreted by any system.")
 public final class XmlDataExporter extends DBOption {
 
-   @Option(names = "log-interval", description = "How often to print progress in the console. Set to <= 0 to disable it.")
+   // @Option(names = "log-interval", description = "How often to print progress in the console. Set to <= 0 to disable it.")
    private int logInterval = 10_000;
 
    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -82,7 +79,7 @@ public final class XmlDataExporter extends DBOption {
 
    private Throwable lastError;
 
-   @Option(names = "undefined-prefix", description = "In case a queue does not exist, this will define the prefix to be used on the message export. Default: 'UndefinedQueue_'")
+   // @Option(names = "undefined-prefix", description = "In case a queue does not exist, this will define the prefix to be used on the message export. Default: 'UndefinedQueue_'")
    private String undefinedPrefix = "UndefinedQueue_";
 
    // an inner map of message refs hashed by the queue ID to which they belong and then hashed by their record ID

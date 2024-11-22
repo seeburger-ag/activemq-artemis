@@ -21,12 +21,11 @@ import org.apache.activemq.artemis.cli.commands.HelpAction;
 import org.apache.activemq.artemis.cli.commands.tools.journal.CompactJournal;
 import org.apache.activemq.artemis.cli.commands.tools.journal.DecodeJournal;
 import org.apache.activemq.artemis.cli.commands.tools.journal.EncodeJournal;
-import org.apache.activemq.artemis.cli.commands.tools.xml.XmlDataExporter;
 import org.apache.activemq.artemis.cli.commands.tools.xml.XmlDataImporter;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "data", description = "use 'help data' for sub commands list", subcommands = {RecoverMessages.class, PrintData.class, XmlDataExporter.class, XmlDataImporter.class, DecodeJournal.class, EncodeJournal.class, CompactJournal.class})
+@Command(name = "data", description = "use 'help data' for sub commands list", subcommands = {RecoverMessages.class, PrintData.class, XmlDataImporter.class, DecodeJournal.class, EncodeJournal.class, CompactJournal.class})
 public class DataGroup implements Runnable {
 
    CommandLine commandLine;

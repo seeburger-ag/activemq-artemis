@@ -290,12 +290,12 @@
          <!--<url>${site-repo-url}</url>-->
       </site>
       <repository>
-          <id>release</id>
-          <url>http://repo.seeburger.de/archiva/repository/release/</url>
+          <id>manual</id>
+          <url>http://repo.seeburger.de/repository/manual/</url>
       </repository>
       <snapshotRepository>
           <id>snapshot}</id>
-          <url>http://repo.seeburger.de/archiva/repository/snapshot/</url>
+          <url>http://repo.seeburger.de/repository/snapshot/</url>
       </snapshotRepository>
    </distributionManagement>
 

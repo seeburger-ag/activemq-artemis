@@ -71,4 +71,14 @@ public class ResponseCache {
    public int size() {
       return this.store.size();
    }
+
+
+   @Override
+   public String toString() {
+      return "ResponseCache{" +
+            "sequence=" + sequence +
+            ", store=" + store +
+            ", responseHandler=" + responseHandler +
+            '}';
+   }
 }

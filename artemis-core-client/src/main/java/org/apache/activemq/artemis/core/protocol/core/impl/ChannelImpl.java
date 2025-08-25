@@ -537,7 +537,10 @@ public final class ChannelImpl implements Channel {
 
             while (!closed && (response == null || (response.getType() != EXCEPTION && (response.getType() != expectedPacket || response.getCorrelationID() != packet.getCorrelationID()))) && toWait > 0) {
                try {
-                  sendCondition.await(toWait, TimeUnit.MILLISECONDS);
+                  boolean awaited = sendCondition.await(toWait, TimeUnit.MILLISECONDS);
+                  if (!awaited) {
+                     logger.warn("RemotingConnectionID={} Sending blocking {} has reached timeout of {}ms on waiting for response.", connection.getID(), packet, toWait);
+                  }
                } catch (InterruptedException e) {
                   throw new ActiveMQInterruptedException(e);
                }
@@ -557,6 +560,11 @@ public final class ChannelImpl implements Channel {
                start = now;
             }
 
+            // toWait will reach zero if sendCondition.await is called multiple times and the total time is more than the timeout
+            if (toWait <= 0) {
+               logger.warn("RemotingConnectionID={} Sending blocking {} has reached timeout of {}ms on multiple waits for response.", connection.getID(), packet, timeout);
+            }
+
             if (closed && toWait > 0 && response == null) {
                Throwable cause = ActiveMQClientMessageBundle.BUNDLE.connectionDestroyed();
                throw ActiveMQClientMessageBundle.BUNDLE.unblockingACall(cause);
@@ -567,6 +575,8 @@ public final class ChannelImpl implements Channel {
             }
 
             if (response == null || (response.getType() != EXCEPTION && response.getCorrelationID() != packet.getCorrelationID())) {
+               logger.error("{} AMQ219014 timeout waiting for response. Response correlationId={}, packet correlationId={}",
+                            toStringDebug(), response.getCorrelationID(), packet.getCorrelationID());
                ActiveMQException e = ActiveMQClientMessageBundle.BUNDLE.timedOutSendingPacket(timeout, packet.getType());
                connection.asyncFail(e);
                throw e;
@@ -905,4 +915,12 @@ public final class ChannelImpl implements Channel {
    public String toString() {
       return "Channel[id=" + CHANNEL_ID.idToString(id) + ", RemotingConnectionID=" + (connection == null ? "NULL" : connection.getID()) + ", handler=" + handler + "]";
    }
+
+
+   private String toStringDebug() {
+      return toString() + " [resendCache=" + resendCache + ", responseAsyncCache=" + responseAsyncCache + ", firstStoredCommandID="
+             + firstStoredCommandID + ", lastConfirmedCommandID=" + lastConfirmedCommandID + ", closed=" + closed + ", failingOver="
+             + failingOver + ", confWindowSize=" + confWindowSize + ", receivedBytes=" + receivedBytes + "]";
+   }
+
 }

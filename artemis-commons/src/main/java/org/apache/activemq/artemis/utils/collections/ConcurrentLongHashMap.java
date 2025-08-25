@@ -192,6 +192,15 @@ public class ConcurrentLongHashMap<V> {
       void accept(long key, V value);
    }
 
+   @Override
+   public String toString() {
+      return "ConcurrentLongHashMap{" +
+             "capacity=" + capacity() +
+             "size=" + size() +
+             "usedBucketCount=" + getUsedBucketCount() +
+             '}';
+   }
+
    // A section is a portion of the hash map that is covered by a single
    @SuppressWarnings("serial")
    private static final class Section<V> extends StampedLock {
